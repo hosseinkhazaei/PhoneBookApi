@@ -45,16 +45,37 @@ namespace phoneBook.Controller
         [HttpPost]
         public IActionResult Post([FromBody] Contact contact)
         {
-            var result = contactService.Add(contact);
-            return Created($"/api/Contact/{result}", "باموفقیت ثبت شد");
+            if (ModelState.IsValid)
+            {
+                var result = contactService.Add(contact);
+                return Created($"/api/Contact/{result}", "باموفقیت ثبت شد");
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+
         }
 
         // PUT: api/Contact/5
         [HttpPut("{id}")]
         public IActionResult Put(int id, [FromBody]  Contact value)
         {
-            var result = contactService.update(id, value);
-            return Ok(result);
+            var contact = contactService.GetById(id);
+            if (contact == null)
+            {
+                return BadRequest("Contact NotFound");
+            }
+            if (ModelState.IsValid)
+            {
+                var result = contactService.update(id, value);
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+
         }
 
         // DELETE: api/ApiWithActions/5
